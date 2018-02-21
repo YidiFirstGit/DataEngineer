@@ -15,7 +15,7 @@ from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
 import util
-
+import seach
 
 def get_formdata(formdata):
     form_data = dict(formdata)
@@ -66,8 +66,7 @@ def new_data():
 def search():
     form_data = get_formdata(request.form)
     # transform data type
-    form_data = {k: int(v) if str(v).isdigit() else v
-                 for k, v in form_data.items()}
+    form_data = seach.transform_datatype(form_data)
     # print(form_data)
     # set lower and upper bounds
     year_s0 = form_data['Year Sold from']
