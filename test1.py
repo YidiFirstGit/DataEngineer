@@ -67,11 +67,7 @@ def search():
     form_data = get_formdata(request.form)
     # transform data type
     form_data = seach.transform_datatype(form_data)
-    # print(form_data)
-    # set lower and upper bounds
-    (year_s0, year_e0,
-    price_s0, price_e0) = seach.generate_lower_upper_bounds(form_data)
-    # JSON logical expression preparing
+    # JSON logical expression preparing with lower and upper bounds
     g1, l1, g2, l2, sc  = seach.get_logical_expression(form_data)
     # Get logical relation
     ek = util.empty_keys(form_data)
