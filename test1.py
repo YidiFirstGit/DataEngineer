@@ -13,10 +13,11 @@ from bokeh.embed import components
 from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
+from datetime import date as dt
 import util
 from util import get_formdata
 import seach
-
+import getfigure
 
 # call the mongo database
 cl, cl_full, field_description, cl_currency = util.call_mongoDB()
@@ -102,29 +103,14 @@ def exchange():
     return render_template('search.html', **env)
 
 
-def figure_setting(title, tool, axis, x_axis_type, x_range):
-    return figure(title=title, plot_width=1000, plot_height=700,
-                  tools=tool, x_axis_label=axis.x_label,
-                  y_axis_label=axis.y_label, x_axis_type=x_axis_type,
-                  x_rang=x_range)
-
-
 @app.route("/getfigure", methods=['POST'])
 def prepare_figure():
     form_data = get_formdata(request.form)
-    print(form_data)
     axis = util.get_form(form_data)
-    from datetime import date as dt
     # use regular expression to find the field correlated to the date
-    regex = ".*" + 'year|month|date' + ".*"
-    field_date = [x['field'] for x in list(
-            field_description.find({
-                    'description': {'$regex': regex, "$options": 'i'}}))]
-    field_date.remove('MoSold')
+    field_date = getfigure.get_date_related_fields_name(field_description)
     # find the field is categorical data, $type is str
-    example = cl_full.find_one({}, {'_id': False, 'Id': False})
-    field_categorical = [i for i in example if type(example[i]) == str]
-    field_categorical.append('MoSold')
+    field_categorical = getfigure.get_categorical_fields_name(cl_full)
     # Some general set up
 
     tool = 'pan,wheel_zoom,box_zoom,reset,previewsave,hover'
