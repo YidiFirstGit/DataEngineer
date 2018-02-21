@@ -6,7 +6,6 @@ Created on Mon Feb 19 13:49:22 2018
 """
 import io
 import openpyxl  # work with excel file
-import numpy as np
 import random
 import pymongo
 
@@ -126,7 +125,7 @@ def call_mongoDB():
     return cl, cl_full, field_description, cl_currency
 
 
-def create_dataframe_with_currency(form_data):
+def create_dataframe_with_currency(cl, cl_currency, form_data):
     form_data['YrSold'] = int(form_data['YrSold'])
     form_data['SalePrice'] = int(form_data['SalePrice'])
     ID = list(cl.find())[-1]['Id']+1
