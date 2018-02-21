@@ -9,7 +9,6 @@ import flask  # web interface
 import pymongo  # mongodb database
 import random
 import pandas as pd
-import numpy as np
 # bokeh for plotting
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.embed import components
