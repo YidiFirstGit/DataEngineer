@@ -105,3 +105,12 @@ class get_form:
         self.x = '$'+self.x_label
         self.y = '$'+self.y_label
         self.y_title = 'avg'+self.y_label
+
+
+def call_mongoDB():
+    client = pymongo.MongoClient('localhost', 27017)
+    cl = client.test_database.test_houseprices
+    cl_full = client.test_database.test
+    field_description = client.test_database.data_fields
+    cl_currency = client.test_database.currencyEuroBase
+    return
