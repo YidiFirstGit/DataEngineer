@@ -8,6 +8,8 @@ import io
 import openpyxl  # work with excel file
 import numpy as np
 import random
+import pymongo
+
 
 def empty_keys(dic):
     return [k for k, v in dic.items() if v == '']
@@ -114,7 +116,7 @@ def call_mongoDB():
     cl_full = client.test_database.test
     field_description = client.test_database.data_fields
     cl_currency = client.test_database.currencyEuroBase
-    return
+    return cl, cl_full, field_description, cl_currency
 
 
 def create_dataframe_with_currency(form_data):

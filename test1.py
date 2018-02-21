@@ -25,7 +25,7 @@ def get_formdata(formdata):
 
 
 # call the mongo database
-util.call_mongoDB()
+cl, cl_full, field_description, cl_currency = util.call_mongoDB()
 
 # build web interface
 app = Flask(__name__)
@@ -69,10 +69,7 @@ def search():
     form_data = seach.transform_datatype(form_data)
     # print(form_data)
     # set lower and upper bounds
-    year_s0 = form_data['Year Sold from']
-    year_e0 = form_data['Year Sold until']
-    price_s0 = form_data['SalePrice from']
-    price_e0 = form_data['SalePrice until']
+    year_s0, year_e0, price_s0, price_e0 = seach.generate_lower_upper_bounds(form_data)
     salecondition = form_data['SaleCondition']
     # JSON logical expression preparing
     g1 = {"YrSold": {"$gte": year_s0}}
