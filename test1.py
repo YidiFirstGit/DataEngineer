@@ -169,7 +169,7 @@ def prepare_figure():
         axis.x_label = 'Month and Year Sold'
         date = ['year', 'month']
         df = prepare_df_time(tmp, axis, date)
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
+        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
         hover = p.select(dict(type=HoverTool))
         tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
@@ -183,7 +183,7 @@ def prepare_figure():
         x_axis_type = 'datetime'
         date = ['_id']
         df = prepare_df_time(tmp, axis, date)
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
+        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
         hover = p.select(dict(type=HoverTool))
         tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
@@ -225,7 +225,7 @@ def prepare_figure():
             x.append(i['_id'])
             y.append(i[axis.y_title])
         title = axis.x_label+' vs '+axis.y_label
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
+        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line(x, y, line_width=2, source=ColumnDataSource(
                 pd.DataFrame(dict(x=x, y=y))))
         hover = p.select(dict(type=HoverTool))

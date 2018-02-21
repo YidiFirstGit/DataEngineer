@@ -1,3 +1,6 @@
+from bokeh.plotting import figure
+
+
 def figure_setting(title, tool, axis, x_axis_type, x_range):
     return figure(title=title, plot_width=1000, plot_height=700,
                   tools=tool, x_axis_label=axis.x_label,
