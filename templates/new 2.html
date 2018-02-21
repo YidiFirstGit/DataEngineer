@@ -1,0 +1,194 @@
+<html>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:2px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:2px;overflow:hidden;word-break:normal;}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-pfso{background-color:rgba(255, 0, 0, 0.3);text-align:center;vertical-align:top}
+.tg .tg-hgcj{font-weight:bold;text-align:center}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+input:invalid {
+  border: 2px dashed red;
+}
+
+input:valid {
+  border: 2px solid black;
+}
+
+/* This is our style for the invalid fields */
+input.invalid{
+  border-color: #900;
+  background-color: #FDD;
+}
+
+input:focus.invalid {
+  outline: none;
+}
+}
+</style>
+<head>
+  <title>House Prices Estimation</title>  <!-- website name-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="{{ url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+  <script>
+ function verify(){
+     var start0 = document.getElementById('ys0').value;
+	 var end1 = document.getElementById('ye1').value;
+	 var start1 = document.getElementById('ps0').value;
+	 var end2 = document.getElementById('pe1').value;
+	 //alert("Submitting s0:" + (start0 == '' && end1 == '' && start1 =='' && end2 ==''));
+	 if (start0 == '' && end1 == '' && start1 =='' && end2 =='') {
+	     alert("Please type at least one value for searching")
+		 return false;
+		 } else if (start0 =='' || end1 =='') {
+		 return true;
+		 } else if (start0 > end1) {
+	     //start0.className = "invalid";
+		 //end1.className = "invalid";
+		 //error.innerHTML = "The end year should be larger than the start year";
+		 //error.className = "error active";
+		 alert("The end year should be larger than the start year")
+		 return false; 
+		 } else {
+	     //start0.className = "valid";
+		 //end1.className = "valid";
+		 //error.innerHTML = "";
+		 //error.className = "error";
+		 return true;
+		 }
+ }
+
+ </script>
+  </head>  
+<body>
+
+<div class="jumbotron" style="background-color:#005798">
+    <div class="container">
+		<div class="media">
+			<div class="media-body">
+				<h2 class="display-3" style="vertical-align: bottom; color:rgb(86,180,233); text-shadow: 0 0 1px #FFFFFF;">House Prices Estimation</h2>
+			</div>
+		</div>
+	</div>
+</div>
+  
+
+    <div class ="row">
+	  <div class = "col-sm-5">
+         <h2> Example Data: </h2> 
+         <table class="tg" align = "left">
+	      <caption align = "center">House Prices example data</caption>
+          <tr>
+            {% for col in columns %}
+	      <th class="tg-amwm">{{col}}</th>
+          {% endfor %} 
+          </tr>
+           {% for row in data%}
+          <tr>{% for col in columns%}
+          <td {% if loop.index0 == 4 and row[col]>200000 %} class="tg-pfso" {% else %} class="tg-baqh" {% endif %} >
+          {{row[col]}}
+          </td>
+          {% endfor %}  
+          </tr>
+	      {% endfor %}
+          </table>
+	    </div>
+		
+	  <div class = "col-sm-7">
+		    <h2> Adding new price information </h2> 
+            <form action="/new_data" method="post">
+			<div class="form-group">
+			   <label for="aa">Year Sold:</label>
+               <input type="number" class="form-control" min="1900" max="2099" step="1" name="YrSold"  required>
+			   <label for="cc"> SaleType:</label>
+               <select name="SaleType" required class="form-control">
+               {% for i in saletype_option %}<option value= {{i}}>{{i}}</option> {% endfor %}
+               </select>
+			   <label for="ee">SaleCondition:</label>
+			   <select name="SaleCondition" class="form-control" required>
+               {% for k in salecondition_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
+               </select>
+			   <label for="dd">SalePrice: </label>
+               <input type="number" min="0" name="SalePrice" class="form-control" required>
+			 </div>
+                <input type="submit" value="Add new house price information">
+             </form>
+		      
+			  
+			 <h2> Searching for records </h2> 
+             <form action="/search" method="post" id="search_form" class="form-inline" onsubmit="return verify()">
+             <div class="form-group">
+               <label for="ff">Year Sold from:</label>
+               <input id="ys0" type="number" class="form-control" min="1900" max="2099" step="1" name="year_from" />
+	           <label for="ss">Year Sold until:</label>
+               <input id="ye1" type="number" class="form-control" min="1900" max="2099" step="1" name="year_until" />
+             </div>
+			 <br>
+			 <br>
+    
+             <div class="form-group">
+	         <label for="tt">SalePrice from:</label>
+	         <input id="ps0" type="number" class="form-control" min="0" step="1000" name="price_from" onchange="document.getElementById('pe1').min=this.value;"/> 
+	         <label for="yy">SalePrice until:</label>
+	         <input id="pe1" type="number" class="form-control" min="document.getElementById('ps0').value" step="1000" name="price_until" />
+             <br>
+             </div>
+			 <br>
+   <!--  <button type="submit" class="btn btn-default">Search</button> -->
+             <input type ="submit" value= "Search">
+             </form>
+			 
+			 
+			 <h2> Exchange currency </h2>
+			 <form action="/exchange" method="post">
+			 <div class= "form-group">
+			     <label for = 'ww'>Show the Sale Price in: </label>
+				 <select name="currency" class="form-control" required>
+				 <!-- <option value= "EUR">EUR</option> -->
+                 {% for k in currency_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
+                 </select>
+				 <input type='submit' value="test" />
+			 </div>
+			 
+			 </form>
+<div class="card">
+    <div class = "card-body">
+    <h4 class="card-title">Exchange currency</h4>
+			 <form action="/exchange" class = "form-inline" method="post">
+			 <div class= "form-group mb-2">
+			     <label for = 'ww'>Show the Sale Price in: </label>
+				 <select name="currency" class="form-control" required>
+				 <!-- <option value= "EUR">EUR</option> -->
+                 {% for k in currency_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
+                 </select>
+				 <input type='submit' value="test" />
+			 </div>
+			 
+			 </form>
+
+	
+     </div>
+</div>
+		
+		
+		
+	     </div>
+
+	
+	</div>
+
+
+
+
+ 
+ 
+</body>
+
+
+
+
+</html>
+

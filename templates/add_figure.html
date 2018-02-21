@@ -1,0 +1,88 @@
+<html>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:2px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:2px;overflow:hidden;word-break:normal;}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-pfso{background-color:rgba(255, 0, 0, 0.3);text-align:center;vertical-align:top}
+.tg .tg-hgcj{font-weight:bold;text-align:center}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+</style>
+  <head>
+  <title>Searching</title>  <!-- website name-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="{{ url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+<link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.css"
+    rel="stylesheet" type="text/css">
+<link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.9.min.css"
+    rel="stylesheet" type="text/css">
+<link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.9.min.css"
+    rel="stylesheet" type="text/css">
+
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.9.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-0.12.9.min.js"></script>
+{{script|safe}}
+  </head>  
+<body>
+
+<div class="jumbotron" style="background-color:#005798">
+    <div class="container">
+		<div class="media">
+			<div class="media-body">
+				<h2 class="display-3" style="vertical-align: bottom; color:rgb(86,180,233); text-shadow: 0 0 1px #FFFFFF;">Requests records</h2>
+			</div>
+		</div>
+	</div>
+</div> 
+  
+<div class="jumbotron">
+<div class="container">
+
+<p> Searching requirement:
+<br>
+{% for key in requests.keys() %} {{key}} : {{requests[key]}}<br>{% endfor %}  
+<br>
+Find {{requests_len}} records.
+</p>
+ 
+<form action="/getfigure" method="post" class="form-inline">
+ <input type="hidden" name="currency" value="{{selected_currency}}">	 
+ <input type="submit" value="Get the Figure">
+ </form>
+ 
+{{div|safe}}
+
+
+    <table class="tg" align = "center">
+	<caption align = "center">Records</caption>
+  <tr>
+  {% for col in columns %}
+	<th class="tg-amwm">{{col}}</th>
+    {% endfor %} 
+  </tr>
+   {% for row in data%}
+   <tr>{% for col in columns%}
+   <td {% if loop.index0 == 4 and row[col] > 200000 %} class="tg-pfso" {% else %} class="tg-baqh" {% endif %}>
+   {{row[col]}}
+   </td>
+     {% endfor %}  
+</tr>
+	  {% endfor %}
+</table>
+
+
+</div>
+</div> 
+
+
+  
+</body>
+
+</html>
