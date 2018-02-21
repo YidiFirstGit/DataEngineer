@@ -71,16 +71,8 @@ def search():
     # set lower and upper bounds
     (year_s0, year_e0,
     price_s0, price_e0) = seach.generate_lower_upper_bounds(form_data)
-    salecondition = form_data['SaleCondition']
     # JSON logical expression preparing
-    g1 = {"YrSold": {"$gte": year_s0}}
-    l1 = {"YrSold": {"$lte": year_e0}}
-    g2 = {"SalePrice": {"$gte": price_s0}}
-    l2 = {"SalePrice": {"$lte": price_e0}}
-    if form_data['SaleCondition'] == 'All':
-        sc = {'SaleCondition': {'$in': cl.distinct('SaleCondition')}}
-    else:
-        sc = {'SaleCondition': salecondition}
+    g1, l1, g2, l2, sc  = seach.get_logical_expression(form_data)
     # Get logical relation
     ek = util.empty_keys(form_data)
     N = len(ek)
