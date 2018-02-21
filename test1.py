@@ -7,7 +7,6 @@ Created on Thu Jan 25 16:34:29 2018
 # Get the package
 import flask  # web interface
 import pymongo  # mongodb database
-import random
 import pandas as pd
 # bokeh for plotting
 from bokeh.plotting import figure, ColumnDataSource
@@ -50,11 +49,7 @@ def main():
 @app.route("/new_data", methods=['POST'])
 def new_data():
     form_data = get_formdata(request.form)
-    form_data['YrSold'] = int(form_data['YrSold'])
-    form_data['SalePrice'] = int(form_data['SalePrice'])
-    ID = list(cl.find())[-1]['Id']+1
-    form_data['Id'] = ID
-    form_data['currency'] = random.choice(cl_currency.distinct('currency'))
+    form_data = util.create_dataframe_with_currency(form_data)
     # insert data into database
     cl.insert_one(form_data)
     # set variable

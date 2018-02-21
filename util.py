@@ -7,6 +7,7 @@ Created on Mon Feb 19 13:49:22 2018
 import io
 import openpyxl  # work with excel file
 import numpy as np
+import random
 
 def empty_keys(dic):
     return [k for k, v in dic.items() if v == '']
@@ -114,3 +115,12 @@ def call_mongoDB():
     field_description = client.test_database.data_fields
     cl_currency = client.test_database.currencyEuroBase
     return
+
+
+def create_dataframe_with_currency(form_data):
+    form_data['YrSold'] = int(form_data['YrSold'])
+    form_data['SalePrice'] = int(form_data['SalePrice'])
+    ID = list(cl.find())[-1]['Id']+1
+    form_data['Id'] = ID
+    form_data['currency'] = random.choice(cl_currency.distinct('currency'))
+    return form_data
