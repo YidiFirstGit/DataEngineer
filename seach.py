@@ -1,3 +1,6 @@
+import re
+
+
 def transform_datatype(form_data):
     form_data = {k: int(v) if str(v).isdigit() else v
                  for k, v in form_data.items()}
@@ -25,3 +28,29 @@ def get_logical_expression(form_data):
     else:
         sc = {'SaleCondition': salecondition}
     return g1, l1, g2, l2, sc
+
+
+def get_logical_relation(emptykey):
+    number_of_requests = len(emptykey)
+    log1 = log2 = log3 = log4 = "$and"
+    if number_of_requests == 1:
+        if 'Year Sold from' in emptykey or 'Year Sold until' in emptykey:
+            log1 = "$or"
+        else:
+            log2 = "$or"
+    elif number_of_requests == 2:
+        if 'Year Sold from' in emptykey and 'Year Sold until' in emptykey:
+            log1 = log3 = "$or"
+        elif 'SalePrice from' in emptykey and 'SalePrice until' in emptykey:
+            log2 = log3 = "$or"
+        else:
+            log1 = log2 = "$or"
+    elif number_of_requests == 3 or number_of_requests == 4:
+        log1 = log2 = log3 = "$or"
+
+    if 'SaleCondition' in emptykey:
+        log4 = "$or"
+    elif number_of_requests == 4 and 'SaleCondition' not in emptykey:
+        log4 = "$or"
+
+    return log1, log2, log3, log4

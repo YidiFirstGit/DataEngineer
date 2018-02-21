@@ -6,7 +6,6 @@ Created on Thu Jan 25 16:34:29 2018
 """
 # Get the package
 import flask  # web interface
-import pymongo  # mongodb database
 import pandas as pd
 # bokeh for plotting
 from bokeh.plotting import figure, ColumnDataSource
@@ -15,13 +14,8 @@ from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
 import util
+from util import get_formdata
 import seach
-
-def get_formdata(formdata):
-    form_data = dict(formdata)
-    form_data = zip([i for i in form_data.keys()], sum(form_data.values(), []))
-    form_data = dict(form_data)
-    return form_data
 
 
 # call the mongo database
@@ -68,31 +62,10 @@ def search():
     # transform data type
     form_data = seach.transform_datatype(form_data)
     # JSON logical expression preparing with lower and upper bounds
-    g1, l1, g2, l2, sc  = seach.get_logical_expression(form_data)
+    g1, l1, g2, l2, sc = seach.get_logical_expression(form_data)
     # Get logical relation
-    ek = util.empty_keys(form_data)
-    N = len(ek)
-    log1 = log2 = log3 = log4 = "$and"
-    if N == 1:
-        if 'Year Sold from' in ek or 'Year Sold until' in ek:
-            log1 = "$or"
-        else:
-            log2 = "$or"
-    elif N == 2:
-        if 'Year Sold from' in ek and 'Year Sold until' in ek:
-            log1 = log3 = "$or"
-        elif 'SalePrice from' in ek and 'SalePrice until' in ek:
-            log2 = log3 = "$or"
-        else:
-            log1 = log2 = "$or"
-    elif N == 3 or N == 4:
-        log1 = log2 = log3 = "$or"
-
-    if 'SaleCondition' in ek:
-        log4 = "$or"
-    elif N == 4 and 'SaleCondition' not in ek:
-        log4 = "$or"
-
+    emptykey = util.empty_keys(form_data)
+    log1, log2, log3, log4 = seach.get_logical_relation(emptykey)
     # request data from database
     lookup = cl.find({
             log4: [{
@@ -101,7 +74,7 @@ def search():
         'tablename': 'Searching',
         'columns': list(cl.find_one())[1:],
         'data': lookup,
-        'requests': util.remove_empty(form_data, ek),
+        'requests': util.remove_empty(form_data, emptykey),
         'requests_len': lookup.count()
     }
     return render_template('search.html', **env)

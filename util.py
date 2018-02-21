@@ -11,6 +11,13 @@ import random
 import pymongo
 
 
+def get_formdata(formdata):
+    form_data = dict(formdata)
+    form_data = zip([i for i in form_data.keys()], sum(form_data.values(), []))
+    form_data = dict(form_data)
+    return form_data
+
+
 def empty_keys(dic):
     return [k for k, v in dic.items() if v == '']
 
