@@ -28,7 +28,6 @@ def get_formdata(formdata):
 util.call_mongoDB()
 
 # build web interface
-
 app = Flask(__name__)
 
 
