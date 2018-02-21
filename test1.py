@@ -69,7 +69,8 @@ def search():
     form_data = seach.transform_datatype(form_data)
     # print(form_data)
     # set lower and upper bounds
-    year_s0, year_e0, price_s0, price_e0 = seach.generate_lower_upper_bounds(form_data)
+    (year_s0, year_e0,
+    price_s0, price_e0) = seach.generate_lower_upper_bounds(form_data)
     salecondition = form_data['SaleCondition']
     # JSON logical expression preparing
     g1 = {"YrSold": {"$gte": year_s0}}
