@@ -13,7 +13,7 @@ from bokeh.embed import components
 from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
-from datetime import date as dt
+
 import util
 from util import get_formdata
 import seach
@@ -106,47 +106,17 @@ def exchange():
 @app.route("/getfigure", methods=['POST'])
 def prepare_figure():
     form_data = get_formdata(request.form)
+    print(form_data)
     axis = util.get_form(form_data)
     # use regular expression to find the field correlated to the date
     field_date = getfigure.get_date_related_fields_name(field_description)
     # find the field is categorical data, $type is str
     field_categorical = getfigure.get_categorical_fields_name(cl_full)
     # Some general set up
-
     tool = 'pan,wheel_zoom,box_zoom,reset,previewsave,hover'
     title = axis.x_label+' vs '+axis.y_label
     x_axis_type = 'linear'
     x_range = None
-
-    def prepare_df_time(tmp, axis, date):
-        """this is called a docstring"""
-        x = []
-        y = []
-
-        def get_ymd(i, date):
-            '''
-            get yEAR, mONTH, dAY information from merge list date
-            refill m, d = 1 if the value is missing
-            '''
-            if len(date) == 3:
-                y, m, d = i[date]
-            elif len(date) == 2:
-                y, m = i[date]
-                d = 1
-            elif len(date) == 1:
-                y = i[date[0]]
-                m = d = 1
-            return y, m, d
-        for i in tmp:
-            tmp = get_ymd(i, date)
-            if type(tmp[0]) == int:
-                x.append(dt(get_ymd(i, date)[0],
-                            get_ymd(i, date)[1],
-                            get_ymd(i, date)[2]))
-                y.append(i[axis.y_title])
-        df = pd.DataFrame(dict(x=x, y=y))
-        df['tooltip'] = [value.strftime("%Y-%m-%d") for value in df['x']]
-        return df
     # prepare for the figure
     # if axis.x_label in 'MoYrSold':
     if axis.x_label == 'MoYrSold':
@@ -168,7 +138,7 @@ def prepare_figure():
         x_axis_type = 'datetime'
         axis.x_label = 'Month and Year Sold'
         date = ['year', 'month']
-        df = prepare_df_time(tmp, axis, date)
+        df = getfigure.prepare_df_time(tmp, axis, date)
         p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
         hover = p.select(dict(type=HoverTool))
@@ -182,7 +152,7 @@ def prepare_figure():
                 }, {'$sort': {'_id': 1}}])
         x_axis_type = 'datetime'
         date = ['_id']
-        df = prepare_df_time(tmp, axis, date)
+        df = getfigure.prepare_df_time(tmp, axis, date)
         p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
         hover = p.select(dict(type=HoverTool))
