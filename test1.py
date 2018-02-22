@@ -6,17 +6,16 @@ Created on Thu Jan 25 16:34:29 2018
 """
 # Get the package
 import flask  # web interface
-import pandas as pd
 # bokeh for plotting
-from bokeh.plotting import figure, ColumnDataSource
+from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
+
 import util
 from util import get_formdata
 import seach
-
+from getfigure import request_figure
 
 # call the mongo database
 cl, cl_full, field_description, cl_currency = util.call_mongoDB()
@@ -42,7 +41,7 @@ def main():
 @app.route("/new_data", methods=['POST'])
 def new_data():
     form_data = get_formdata(request.form)
-    form_data = util.create_dataframe_with_currency(form_data)
+    form_data = util.create_dataframe_with_currency(cl, cl_currency, form_data)
     # insert data into database
     cl.insert_one(form_data)
     # set variable
@@ -102,151 +101,11 @@ def exchange():
     return render_template('search.html', **env)
 
 
-def figure_setting(title, tool, axis, x_axis_type, x_range):
-    return figure(title=title, plot_width=1000, plot_height=700,
-                  tools=tool, x_axis_label=axis.x_label,
-                  y_axis_label=axis.y_label, x_axis_type=x_axis_type,
-                  x_rang=x_range)
-
-
 @app.route("/getfigure", methods=['POST'])
 def prepare_figure():
     form_data = get_formdata(request.form)
-    print(form_data)
     axis = util.get_form(form_data)
-    from datetime import date as dt
-    # use regular expression to find the field correlated to the date
-    regex = ".*" + 'year|month|date' + ".*"
-    field_date = [x['field'] for x in list(
-            field_description.find({
-                    'description': {'$regex': regex, "$options": 'i'}}))]
-    field_date.remove('MoSold')
-    # find the field is categorical data, $type is str
-    example = cl_full.find_one({}, {'_id': False, 'Id': False})
-    field_categorical = [i for i in example if type(example[i]) == str]
-    field_categorical.append('MoSold')
-    # Some general set up
-
-    tool = 'pan,wheel_zoom,box_zoom,reset,previewsave,hover'
-    title = axis.x_label+' vs '+axis.y_label
-    x_axis_type = 'linear'
-    x_range = None
-
-    def prepare_df_time(tmp, axis, date):
-        """this is called a docstring"""
-        x = []
-        y = []
-
-        def get_ymd(i, date):
-            '''
-            get yEAR, mONTH, dAY information from merge list date
-            refill m, d = 1 if the value is missing
-            '''
-            if len(date) == 3:
-                y, m, d = i[date]
-            elif len(date) == 2:
-                y, m = i[date]
-                d = 1
-            elif len(date) == 1:
-                y = i[date[0]]
-                m = d = 1
-            return y, m, d
-        for i in tmp:
-            tmp = get_ymd(i, date)
-            if type(tmp[0]) == int:
-                x.append(dt(get_ymd(i, date)[0],
-                            get_ymd(i, date)[1],
-                            get_ymd(i, date)[2]))
-                y.append(i[axis.y_title])
-        df = pd.DataFrame(dict(x=x, y=y))
-        df['tooltip'] = [value.strftime("%Y-%m-%d") for value in df['x']]
-        return df
-    # prepare for the figure
-    # if axis.x_label in 'MoYrSold':
-    if axis.x_label == 'MoYrSold':
-        # merge month and year
-        tmp = cl_full.aggregate([{
-                '$group': {
-                        '_id': {'year': '$YrSold', 'month': '$MoSold'},
-                        axis.y_title: {
-                                '$avg': axis.y}
-                        }}, {
-                        '$project': {
-                                'year': '$_id.year',
-                                'month': '$_id.month',
-                                axis.y_title: '$'+axis.y_title,
-                                '_id': 0}},
-                        {'$sort': {'year': 1, 'month': 1}}
-                        ])
-        title = 'Sold time vs '+axis.y_label
-        x_axis_type = 'datetime'
-        axis.x_label = 'Month and Year Sold'
-        date = ['year', 'month']
-        df = prepare_df_time(tmp, axis, date)
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line('x', 'y', source=ColumnDataSource(df))
-        hover = p.select(dict(type=HoverTool))
-        tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
-    # elif form in field_date:
-    elif axis.x_label in field_date:
-        # transfer the int to date
-        tmp = cl_full.aggregate([{
-                '$group': {'_id': axis.x, axis.y_title: {'$avg': axis.y}}
-                }, {'$sort': {'_id': 1}}])
-        x_axis_type = 'datetime'
-        date = ['_id']
-        df = prepare_df_time(tmp, axis, date)
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line('x', 'y', source=ColumnDataSource(df))
-        hover = p.select(dict(type=HoverTool))
-        tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
-
-    # elif form in field_categorical:
-    elif axis.x_label in field_categorical:
-        # 1. categorcial axis 2. boxplot(later)
-        tmp = cl_full.aggregate([{
-                '$group': {'_id': axis.x, axis.y_title: {'$avg': axis.y}}
-                }, {'$sort': {'_id': 1}}])
-        factor = []
-        y = []
-        for i in tmp:
-            factor.append(i['_id'])
-            y.append(i[axis.y_title])
-        # replace MoSold with month name
-        if axis.x_label == 'MoSold':
-            factor = [util.NumToMonth(i) for i in factor]
-        p = figure(tools=tool, x_range=factor, title=title)
-        p.xaxis.axis_label = axis.x_label
-        p.yaxis.axis_label = axis.y_label
-        # p = prepare_figure(title,tool,axis,x_axis_type,x_range)
-        p.circle(factor, y, size=15,
-                 source=ColumnDataSource(pd.DataFrame(
-                         dict(factor=factor, y=y))))
-        hover = p.select(dict(type=HoverTool))
-        tips = [(axis.x_label, '@factor'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
-    # else:
-    else:
-        # simple calculate the averge:
-        tmp = cl_full.aggregate([{
-                '$group': {'_id': axis.x, axis.y_title: {'$avg': axis.y}}
-                }, {'$sort': {'_id': 1}}])
-        x = []
-        y = []
-        for i in tmp:
-            x.append(i['_id'])
-            y.append(i[axis.y_title])
-        title = axis.x_label+' vs '+axis.y_label
-        p = figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line(x, y, line_width=2, source=ColumnDataSource(
-                pd.DataFrame(dict(x=x, y=y))))
-        hover = p.select(dict(type=HoverTool))
-        tips = [(axis.x_label, '@x'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
-
-    # get html components
+    p = request_figure(cl_full, axis, field_description)
     script, div = components(p)
     env = {
         'script': script,
