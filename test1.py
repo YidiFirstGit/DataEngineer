@@ -111,73 +111,15 @@ def prepare_figure():
     field_date = getfigure.get_date_related_fields_name(field_description)
     # find the field is categorical data, $type is str
     field_categorical = getfigure.get_categorical_fields_name(cl_full)
-    # Some general set up
-    tool = 'pan,wheel_zoom,box_zoom,reset,previewsave,hover'
-    title = axis.x_label+' vs '+axis.y_label
-    x_axis_type = 'linear'
-    x_range = None
-    # prepare for the figure
-    # if axis.x_label in 'MoYrSold':
     if axis.x_label == 'MoYrSold':
-        # merge month and year
-        tmp = getfigure.aggregate_merge_month_year(cl_full, axis)
-        title = 'Sold time vs '+axis.y_label
-        x_axis_type = 'datetime'
-        axis.x_label = 'Month and Year Sold'
-        date = ['year', 'month']
-        df = getfigure.prepare_df_time(tmp, axis, date)
-        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line('x', 'y', source=ColumnDataSource(df))
-        getfigure.hovertools_settings(fig = p, x_type = x_axis_type)
-    # elif form in field_date:
+        p = getfigure.figure_moyr(cl_full, axis)
     elif axis.x_label in field_date:
-        # transfer the int to date
-        tmp = getfigure.aggregate_avg_sale(cl_full, axis)
-        x_axis_type = 'datetime'
-        date = ['_id']
-        df = getfigure.prepare_df_time(tmp, axis, date)
-        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line('x', 'y', source=ColumnDataSource(df))
-        getfigure.hovertools_settings(fig = p, x_type = x_axis_type)
-
-    # elif form in field_categorical:
+        p = getfigure.figure_date(cl_full, axis)
     elif axis.x_label in field_categorical:
-        # 1. categorcial axis 2. boxplot(later)
-        tmp = getfigure.aggregate_avg_sale(cl_full, axis)
-        factor = []
-        y = []
-        for i in tmp:
-            factor.append(i['_id'])
-            y.append(i[axis.y_title])
-        # replace MoSold with month name
-        if axis.x_label == 'MoSold':
-            factor = [util.NumToMonth(i) for i in factor]
-        p = figure(tools=tool, x_range=factor, title=title)
-        p.xaxis.axis_label = axis.x_label
-        p.yaxis.axis_label = axis.y_label
-        # p = prepare_figure(title,tool,axis,x_axis_type,x_range)
-        p.circle(factor, y, size=15,
-                 source=ColumnDataSource(pd.DataFrame(
-                         dict(factor=factor, y=y))))
-        getfigure.hovertools_settings(fig = p, x = axis.x_label,
-        tip_col = '@factor')
-
+        p = getfigure.figure_categorical(cl_full, axis)
     # else:
     else:
-        # simple calculate the averge:
-        tmp = getfigure.aggregate_avg_sale(cl_full, axis)
-        x = []
-        y = []
-        for i in tmp:
-            x.append(i['_id'])
-            y.append(i[axis.y_title])
-        title = axis.x_label+' vs '+axis.y_label
-        p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
-        p.line(x, y, line_width=2, source=ColumnDataSource(
-                pd.DataFrame(dict(x=x, y=y))))
-        getfigure.hovertools_settings(fig = p, x = axis.x_label,
-        tip_col = '@x')
-    # get html components
+        p = getfigure.figure_numerical(cl_full, axis)
     script, div = components(p)
     env = {
         'script': script,

@@ -1,13 +1,8 @@
-from bokeh.plotting import figure
+from bokeh.plotting import figure, ColumnDataSource
 from datetime import date as dt
 import pandas as pd
 from bokeh.models import HoverTool
-
-def figure_setting(title, tool, axis, x_axis_type, x_range):
-    return figure(title=title, plot_width=1000, plot_height=700,
-                  tools=tool, x_axis_label=axis.x_label,
-                  y_axis_label=axis.y_label, x_axis_type=x_axis_type,
-                  x_range=x_range)
+import util
 
 
 def get_date_related_fields_name(field_description):
@@ -96,12 +91,79 @@ def aggregate_avg_sale(cl_full, axis):
     return tmp
 
 
-def hovertools_settings(fig, x_type = 'linear', x = 'date', tip_col = '@tooltip'):
+def figure_setting(title, axis, x_axis_type = 'linear', x_range = None):
+    return figure(title= title, plot_width=1000, plot_height=700,
+                  tools='pan,wheel_zoom,box_zoom,reset,previewsave,hover',
+                  x_axis_label=axis.x_label,
+                  y_axis_label=axis.y_label, x_axis_type=x_axis_type,
+                  x_range=x_range)
+
+
+def hovertools_settings(fig, x_type='linear', x='date', tip_col='@tooltip'):
     '''
     fig : figure
     x_type : 'linear'(default) or 'datetime'
     '''
-    hover = fig.select(dict(type = HoverTool))
+    hover = fig.select(dict(type=HoverTool))
     tips = [(x, tip_col), ('AvgPrice', '@y{($ 0.00 a)}')]
     hover.tooltips = tips
     return
+
+
+def figure_moyr(cl_full, axis):
+    tmp = aggregate_merge_month_year(cl_full, axis)
+    title = 'Sold time vs '+axis.y_label
+    x_axis_type = 'datetime'
+    axis.x_label = 'Month and Year Sold'
+    date = ['year', 'month']
+    df = prepare_df_time(tmp, axis, date)
+    p = figure_setting(title=title, axis=axis, x_axis_type=x_axis_type)
+    p.line('x', 'y', source=ColumnDataSource(df))
+    hovertools_settings(fig=p, x_type=x_axis_type)
+    return p
+
+def figure_date(cl_full, axis):
+    tmp = aggregate_avg_sale(cl_full, axis)
+    x_axis_type = 'datetime'
+    title = axis.x_label+' vs '+axis.y_label
+    date = ['_id']
+    df = prepare_df_time(tmp, axis, date)
+    p = figure_setting(title=title, axis=axis, x_axis_type=x_axis_type)
+    p.line('x', 'y', source=ColumnDataSource(df))
+    hovertools_settings(fig = p, x_type = x_axis_type)
+    return p
+
+
+def figure_categorical(cl_full, axis):
+    tmp = aggregate_avg_sale(cl_full, axis)
+    title = axis.x_label+' vs '+axis.y_label
+    factor = []
+    y = []
+    for i in tmp:
+        factor.append(i['_id'])
+        y.append(i[axis.y_title])
+    # replace MoSold with month name
+    if axis.x_label == 'MoSold':
+        factor = [util.NumToMonth(i) for i in factor]
+    p = figure_setting(title=title, axis=axis, x_range = factor, x_axis_type='auto')
+    p.circle(factor, y, size=15,
+             source=ColumnDataSource(pd.DataFrame(
+                     dict(factor=factor, y=y))))
+    hovertools_settings(fig = p, x = axis.x_label,
+    tip_col = '@factor')
+    return p
+
+
+def figure_numerical(cl_full, axis):
+    tmp = aggregate_avg_sale(cl_full, axis)
+    x = []
+    y = []
+    for i in tmp:
+        x.append(i['_id'])
+        y.append(i[axis.y_title])
+    title = axis.x_label+' vs '+axis.y_label
+    p = figure_setting(title, axis)
+    p.line(x, y, line_width=2, source=ColumnDataSource(
+            pd.DataFrame(dict(x=x, y=y))))
+    hovertools_settings(fig = p, x = axis.x_label, tip_col = '@x')
+    return p
