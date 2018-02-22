@@ -128,9 +128,7 @@ def prepare_figure():
         df = getfigure.prepare_df_time(tmp, axis, date)
         p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
-        hover = p.select(dict(type=HoverTool))
-        tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
+        getfigure.hovertools_settings(fig = p, x_type = x_axis_type)
     # elif form in field_date:
     elif axis.x_label in field_date:
         # transfer the int to date
@@ -140,9 +138,7 @@ def prepare_figure():
         df = getfigure.prepare_df_time(tmp, axis, date)
         p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line('x', 'y', source=ColumnDataSource(df))
-        hover = p.select(dict(type=HoverTool))
-        tips = [('date', '@tooltip'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
+        getfigure.hovertools_settings(fig = p, x_type = x_axis_type)
 
     # elif form in field_categorical:
     elif axis.x_label in field_categorical:
@@ -163,9 +159,9 @@ def prepare_figure():
         p.circle(factor, y, size=15,
                  source=ColumnDataSource(pd.DataFrame(
                          dict(factor=factor, y=y))))
-        hover = p.select(dict(type=HoverTool))
-        tips = [(axis.x_label, '@factor'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
+        getfigure.hovertools_settings(fig = p, x = axis.x_label,
+        tip_col = '@factor')
+
     # else:
     else:
         # simple calculate the averge:
@@ -179,10 +175,8 @@ def prepare_figure():
         p = getfigure.figure_setting(title, tool, axis, x_axis_type, x_range)
         p.line(x, y, line_width=2, source=ColumnDataSource(
                 pd.DataFrame(dict(x=x, y=y))))
-        hover = p.select(dict(type=HoverTool))
-        tips = [(axis.x_label, '@x'), ('AvgPrice', '@y{($ 0.00 a)}')]
-        hover.tooltips = tips
-
+        getfigure.hovertools_settings(fig = p, x = axis.x_label,
+        tip_col = '@x')
     # get html components
     script, div = components(p)
     env = {

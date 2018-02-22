@@ -1,7 +1,7 @@
 from bokeh.plotting import figure
 from datetime import date as dt
 import pandas as pd
-
+from bokeh.models import HoverTool
 
 def figure_setting(title, tool, axis, x_axis_type, x_range):
     return figure(title=title, plot_width=1000, plot_height=700,
@@ -94,3 +94,14 @@ def aggregate_avg_sale(cl_full, axis):
             '$group': {'_id': axis.x, axis.y_title: {'$avg': axis.y}}
             }, {'$sort': {'_id': 1}}])
     return tmp
+
+
+def hovertools_settings(fig, x_type = 'linear', x = 'date', tip_col = '@tooltip'):
+    '''
+    fig : figure
+    x_type : 'linear'(default) or 'datetime'
+    '''
+    hover = fig.select(dict(type = HoverTool))
+    tips = [(x, tip_col), ('AvgPrice', '@y{($ 0.00 a)}')]
+    hover.tooltips = tips
+    return
