@@ -6,18 +6,16 @@ Created on Thu Jan 25 16:34:29 2018
 """
 # Get the package
 import flask  # web interface
-import pandas as pd
 # bokeh for plotting
-from bokeh.plotting import figure, ColumnDataSource
+from bokeh.plotting import figure
 from bokeh.embed import components
-from bokeh.models import HoverTool
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
 
 import util
 from util import get_formdata
 import seach
-import getfigure
+from getfigure import request_figure
 
 # call the mongo database
 cl, cl_full, field_description, cl_currency = util.call_mongoDB()
@@ -107,19 +105,7 @@ def exchange():
 def prepare_figure():
     form_data = get_formdata(request.form)
     axis = util.get_form(form_data)
-    # use regular expression to find the field correlated to the date
-    field_date = getfigure.get_date_related_fields_name(field_description)
-    # find the field is categorical data, $type is str
-    field_categorical = getfigure.get_categorical_fields_name(cl_full)
-    if axis.x_label == 'MoYrSold':
-        p = getfigure.figure_moyr(cl_full, axis)
-    elif axis.x_label in field_date:
-        p = getfigure.figure_date(cl_full, axis)
-    elif axis.x_label in field_categorical:
-        p = getfigure.figure_categorical(cl_full, axis)
-    # else:
-    else:
-        p = getfigure.figure_numerical(cl_full, axis)
+    p = request_figure(cl_full, axis, field_description)
     script, div = components(p)
     env = {
         'script': script,

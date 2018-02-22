@@ -167,3 +167,20 @@ def figure_numerical(cl_full, axis):
             pd.DataFrame(dict(x=x, y=y))))
     hovertools_settings(fig = p, x = axis.x_label, tip_col = '@x')
     return p
+
+
+def request_figure(cl_full, axis, field_description):
+    # use regular expression to find the field correlated to the date
+    field_date = get_date_related_fields_name(field_description)
+    # find the field is categorical data, $type is str
+    field_categorical = get_categorical_fields_name(cl_full)
+    if axis.x_label == 'MoYrSold':
+        p = figure_moyr(cl_full, axis)
+    elif axis.x_label in field_date:
+        p = figure_date(cl_full, axis)
+    elif axis.x_label in field_categorical:
+        p = figure_categorical(cl_full, axis)
+    # else:
+    else:
+        p = figure_numerical(cl_full, axis)
+    return p
