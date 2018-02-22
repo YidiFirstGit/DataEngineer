@@ -14,7 +14,7 @@ from gevent.wsgi import WSGIServer
 
 import util
 from util import get_formdata
-import seach
+from seach import request_data
 from getfigure import request_figure
 
 # call the mongo database
@@ -58,17 +58,7 @@ def new_data():
 @app.route("/search", methods=['POST'])
 def search():
     form_data = get_formdata(request.form)
-    # transform data type
-    form_data = seach.transform_datatype(form_data)
-    # JSON logical expression preparing with lower and upper bounds
-    g1, l1, g2, l2, sc = seach.get_logical_expression(form_data)
-    # Get logical relation
-    emptykey = util.empty_keys(form_data)
-    log1, log2, log3, log4 = seach.get_logical_relation(emptykey)
-    # request data from database
-    lookup = cl.find({
-            log4: [{
-                    log3: [{log1: [g1, l1]}, {log2: [g2, l2]}]}, sc]})
+    lookup, emptykey = request_data(cl, form_data)
     env = {
         'tablename': 'Searching',
         'columns': list(cl.find_one())[1:],
