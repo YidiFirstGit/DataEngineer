@@ -2,7 +2,7 @@ from bokeh.plotting import figure, ColumnDataSource
 from datetime import date as dt
 import pandas as pd
 from bokeh.models import HoverTool
-import util
+from util import NumToMonth
 
 
 def get_date_related_fields_name(field_description):
@@ -145,7 +145,7 @@ def figure_categorical(cl_full, axis):
         y.append(i[axis.y_title])
     # replace MoSold with month name
     if axis.x_label == 'MoSold':
-        factor = [util.NumToMonth(i) for i in factor]
+        factor = [NumToMonth(i) for i in factor]
     p = figure_setting(title=title, axis=axis,
                        x_range=factor, x_axis_type='auto')
     p.circle(factor, y, size=15,
