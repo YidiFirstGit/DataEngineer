@@ -91,8 +91,8 @@ def aggregate_avg_sale(cl_full, axis):
     return tmp
 
 
-def figure_setting(title, axis, x_axis_type = 'linear', x_range = None):
-    return figure(title= title, plot_width=1000, plot_height=700,
+def figure_setting(title, axis, x_axis_type='linear', x_range=None):
+    return figure(title=title, plot_width=1000, plot_height=700,
                   tools='pan,wheel_zoom,box_zoom,reset,previewsave,hover',
                   x_axis_label=axis.x_label,
                   y_axis_label=axis.y_label, x_axis_type=x_axis_type,
@@ -122,6 +122,7 @@ def figure_moyr(cl_full, axis):
     hovertools_settings(fig=p, x_type=x_axis_type)
     return p
 
+
 def figure_date(cl_full, axis):
     tmp = aggregate_avg_sale(cl_full, axis)
     x_axis_type = 'datetime'
@@ -130,7 +131,7 @@ def figure_date(cl_full, axis):
     df = prepare_df_time(tmp, axis, date)
     p = figure_setting(title=title, axis=axis, x_axis_type=x_axis_type)
     p.line('x', 'y', source=ColumnDataSource(df))
-    hovertools_settings(fig = p, x_type = x_axis_type)
+    hovertools_settings(fig=p, x_type=x_axis_type)
     return p
 
 
@@ -145,12 +146,12 @@ def figure_categorical(cl_full, axis):
     # replace MoSold with month name
     if axis.x_label == 'MoSold':
         factor = [util.NumToMonth(i) for i in factor]
-    p = figure_setting(title=title, axis=axis, x_range = factor, x_axis_type='auto')
+    p = figure_setting(title=title, axis=axis,
+                       x_range=factor, x_axis_type='auto')
     p.circle(factor, y, size=15,
              source=ColumnDataSource(pd.DataFrame(
                      dict(factor=factor, y=y))))
-    hovertools_settings(fig = p, x = axis.x_label,
-    tip_col = '@factor')
+    hovertools_settings(fig=p, x=axis.x_label, tip_col='@factor')
     return p
 
 
@@ -165,7 +166,7 @@ def figure_numerical(cl_full, axis):
     p = figure_setting(title, axis)
     p.line(x, y, line_width=2, source=ColumnDataSource(
             pd.DataFrame(dict(x=x, y=y))))
-    hovertools_settings(fig = p, x = axis.x_label, tip_col = '@x')
+    hovertools_settings(fig=p, x=axis.x_label, tip_col='@x')
     return p
 
 
