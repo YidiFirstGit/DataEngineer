@@ -72,13 +72,7 @@ def search():
 @app.route("/exchange", methods=['POST'])
 def exchange():
     form_data = get_formdata(request.form)
-    # print(form_data)
-    target_currency = form_data['currency']
-    # get the exchange rate from database
-    exchange_rate = list(cl_currency.find({
-            'currency': target_currency}))[0]['rate']
-    lookup = list(cl.aggregate(util.exchange_pipeline(exchange_rate)))
-    required_data_lenth = len(lookup)
+    lookup, target_currency, required_data_lenth = util.excange_with_target_currency(cl_currency, cl, form_data)
     # set up parameter
     env = {
         'tablename': 'Searching',

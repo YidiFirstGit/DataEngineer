@@ -132,3 +132,12 @@ def create_dataframe_with_currency(cl, cl_currency, form_data):
     form_data['Id'] = ID
     form_data['currency'] = random.choice(cl_currency.distinct('currency'))
     return form_data
+
+
+def excange_with_target_currency(cl_currency, cl, form_data):
+    target_currency = form_data['currency']
+    exchange_rate = list(cl_currency.find({
+                        'currency': target_currency}))[0]['rate']
+    lookup = list(cl.aggregate(exchange_pipeline(exchange_rate)))
+    required_data_lenth = len(lookup)
+    return lookup, target_currency, required_data_lenth
