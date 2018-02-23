@@ -8,7 +8,7 @@ import io
 import openpyxl  # work with excel file
 import random
 import pymongo
-
+from bokeh.plotting import figure
 
 def get_formdata(formdata):
     form_data = dict(formdata)
@@ -141,3 +141,33 @@ def excange_with_target_currency(cl_currency, cl, form_data):
     lookup = list(cl.aggregate(exchange_pipeline(exchange_rate)))
     required_data_lenth = len(lookup)
     return lookup, target_currency, required_data_lenth
+
+
+def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
+    target_currency = form_data['currency']
+    exchange_rate = list(cl_currency.find({
+                        'currency': target_currency}))[0]['rate']
+    prepare_avg = {'$group': {'_id': '$YrSold', 'avgPrice': {'$avg': '$Price(currency)'}}}
+    sort_avg = {'$sort': {'_id': 1}}
+    pipeline_avg = exchange_pipeline(exchange_rate)
+    pipeline_avg.append(prepare_avg)
+    pipeline_avg.append(sort_avg)
+    lookup = list(cl.aggregate(pipeline_avg))
+    required_data_lenth = len(lookup)
+    return lookup, target_currency, required_data_lenth
+
+
+def add_figure(lookup):
+    x = []
+    y = []
+    for i in lookup:
+        x.append(i['_id'])
+        y.append(i['avgPrice'])
+    # create a new plot with a title and axis labels
+    p = figure(title="YrSold vs SalePrice",
+               x_axis_label='Year Sold',
+               y_axis_type='log',
+               y_axis_label='Sale Price')
+    # add a line renderer with legend and line thickness
+    p.line(x, y, legend="Sale Price", line_width=2)
+    return p
