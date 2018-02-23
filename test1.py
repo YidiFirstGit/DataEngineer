@@ -7,7 +7,6 @@ Created on Thu Jan 25 16:34:29 2018
 # Get the package
 import flask  # web interface
 # bokeh for plotting
-from bokeh.plotting import figure
 from bokeh.embed import components
 from flask import Flask, render_template, request
 from gevent.wsgi import WSGIServer
@@ -102,26 +101,8 @@ def prepare_figure():
 def plot_figure():
     form_data = get_formdata(request.form)
     print(form_data)
-    target_currency = form_data['currency']
-    exchange_rate = list(cl_currency.find({
-            'currency': target_currency}))[0]['rate']
-    lookup = list(cl.aggregate(util.exchange_pipeline(exchange_rate)))
-    required_data_lenth = len(lookup)
-    tmp = cl.aggregate([{
-            '$group': {'_id': '$YrSold', 'avgPrice': {'$avg': '$SalePrice'}}
-            }, {'$sort': {'_id': 1}}])
-    x = []
-    y = []
-    for i in tmp:
-        x.append(i['_id'])
-        y.append(i['avgPrice'])
-    # create a new plot with a title and axis labels
-    p = figure(title="YrSold vs SalePrice",
-               x_axis_label='Year Sold',
-               y_axis_type='log',
-               y_axis_label='Sale Price')
-    # add a line renderer with legend and line thickness
-    p.line(x, y, legend="Sale Price", line_width=2)
+    lookup, target_currency, required_data_lenth = util.aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data)
+    p = util.add_figure(lookup)
     script, div = components(p)
     env = {
         'tablename': 'Searching',
