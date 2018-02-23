@@ -71,7 +71,9 @@ def search():
 @app.route("/exchange", methods=['POST'])
 def exchange():
     form_data = get_formdata(request.form)
-    lookup, target_currency, required_data_lenth = util.excange_with_target_currency(cl_currency, cl, form_data)
+    (lookup, target_currency,
+     required_data_lenth) = util.excange_with_target_currency(cl_currency,
+                                                              cl, form_data)
     # set up parameter
     env = {
         'tablename': 'Searching',
@@ -101,7 +103,9 @@ def prepare_figure():
 def plot_figure():
     form_data = get_formdata(request.form)
     print(form_data)
-    lookup, target_currency, required_data_lenth = util.aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data)
+    (lookup, target_currency,
+     required_data_lenth) = util.aggregate_avg_exchage_with_target_currency(
+             cl_currency, cl, form_data)
     p = util.add_figure(lookup)
     script, div = components(p)
     env = {

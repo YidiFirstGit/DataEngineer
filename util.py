@@ -10,6 +10,7 @@ import random
 import pymongo
 from bokeh.plotting import figure
 
+
 def get_formdata(formdata):
     form_data = dict(formdata)
     form_data = zip([i for i in form_data.keys()], sum(form_data.values(), []))
@@ -147,7 +148,9 @@ def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
     target_currency = form_data['currency']
     exchange_rate = list(cl_currency.find({
                         'currency': target_currency}))[0]['rate']
-    prepare_avg = {'$group': {'_id': '$YrSold', 'avgPrice': {'$avg': '$Price(currency)'}}}
+    prepare_avg = {
+            '$group': {'_id': '$YrSold', 'avgPrice': {
+                    '$avg': '$Price(currency)'}}}
     sort_avg = {'$sort': {'_id': 1}}
     pipeline_avg = exchange_pipeline(exchange_rate)
     pipeline_avg.append(prepare_avg)
