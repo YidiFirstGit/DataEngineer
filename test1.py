@@ -13,7 +13,7 @@ from gevent.wsgi import WSGIServer
 
 import util
 from util import get_formdata
-from seach import request_data
+from search import request_data
 from getfigure import request_figure
 
 # call the mongo database
