@@ -3,7 +3,9 @@
 
 This project aims to learning how to use MongoDB with Python and build a Web interface with Flask. 
 
-Python packages: pymongo, flask, bokeh 
+Python packages: pymongo, flask, bokeh, gevent 
+
+**Please make sure you have all those packages installed in your machine before you go any further.** 
 
 Testing Data: The house prices estimation training data from Kaggle Competition, available [here](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data).
 
@@ -25,7 +27,7 @@ There are five collections in the "**test_database**".
 -------
 
 1.	Please download and install Mongodb, [here](https://www.mongodb.com/download-center?jmp=nav#community) and Studio 3T, [here](https://studio3t.com/download/?gclid=CjwKCAiA_c7UBRAjEiwApCZi8S22lBU81zoWG7zI8AAofJZpeBDKOUCDY-1J9EGkS-75mY6WHnFO3hoC4XUQAvD_BwE). 
-2.	Set up database with mongodump folder. 
+2.	Set up database with mongodump folder. (**Please decompress the mongodump file in a directory before you go any further.**) 
 - Run mongod.exe in cmd. It might be in the path "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe"
 - Open Studio 3T and connect with DB server (localhost:27017)
 - In the Studio 3T, click the “Import” in the top graphical menu. 
