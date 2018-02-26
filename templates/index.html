@@ -52,7 +52,7 @@ input:focus.invalid {
 		 //error.innerHTML = "The end year should be larger than the start year";
 		 //error.className = "error active";
 		 alert("The end year should be larger than the start year")
-		 return false; 
+		 return false;
 		 } else {
 	     //start0.className = "valid";
 		 //end1.className = "valid";
@@ -63,7 +63,7 @@ input:focus.invalid {
  }
 
  </script>
-  </head>  
+  </head>
 <body>
 
 <div class="jumbotron" style="background-color:#005798">
@@ -75,32 +75,34 @@ input:focus.invalid {
 		</div>
 	</div>
 </div>
-  
+
 <div class="jumbotron">
 <div class="container">
     <div class ="row">
-	  <div class = "col-sm-5">
-         <h2> Example Data: </h2> 
+	  <div class = "col-md-5">
+         <h2> Example Data: </h2>
+         <div class="table-responsive">
          <table class="tg" align = "left">
 	      <caption align = "center">House Prices example data</caption>
           <tr>
             {% for col in columns %}
 	      <th class="tg-amwm">{{col}}</th>
-          {% endfor %} 
+          {% endfor %}
           </tr>
            {% for row in data%}
           <tr>{% for col in columns%}
           <td {% if loop.index0 == 4 and row[col]>200000 %} class="tg-pfso" {% else %} class="tg-baqh" {% endif %} >
           {{row[col]}}
           </td>
-          {% endfor %}  
+          {% endfor %}
           </tr>
 	      {% endfor %}
           </table>
+        </div>
 	    </div>
-		
-	  <div class = "col-sm-7">
-		    <h2> Adding new price information </h2> 
+
+	  <div class = "col-md-7">
+		    <h2> Adding new price information </h2>
             <form action="/new_data" method="post">
 			<div class="form-group">
 			   <label for="aa">Year Sold:</label>
@@ -118,9 +120,9 @@ input:focus.invalid {
 			 </div>
                 <input type="submit" value="Add new house price information">
              </form>
-		      
-			  
-			 <h2> Searching for records </h2> 
+
+
+			 <h2> Searching for records </h2>
              <form action="/search" method="post" id="search_form" class="form-inline" onsubmit="return verify()">
              <div class="form-group">
                <label for="ff">Year Sold from:</label>
@@ -130,29 +132,29 @@ input:focus.invalid {
              </div>
 			 <br>
 			 <br>
-    
+
              <div class="form-group">
 	         <label for="tt">SalePrice from:</label>
-	         <input id="ps0" type="number" class="form-control" min="0" step="1000" name="SalePrice from" onchange="document.getElementById('pe1').min=this.value;"/> 
+	         <input id="ps0" type="number" class="form-control" min="0" step="1000" name="SalePrice from" onchange="document.getElementById('pe1').min=this.value;"/>
 	         <label for="yy">SalePrice until:</label>
 	         <input id="pe1" type="number" class="form-control" min="document.getElementById('ps0').value" step="1000" name="SalePrice until" />
              <br>
              </div>
 			 <br>
 			 <br>
-			 
+
 			 <div class="form-group">
 			 <label for="ee">SaleCondition:</label>
 			 <select name="SaleCondition" class="form-control" id = "sc" required>
 			 <option value = 'All'>All</option>
              {% for k in salecondition_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
-             
+
              </div>
-			 
+
 			 <input type ="submit" value= "Search">
 			 </form>
-			 
-			 
+
+
 			 <h2> Exchange currency </h2>
 			 <form action="/exchange" method="post" class="form-inline">
 			 <div class= "form-group">
@@ -163,11 +165,11 @@ input:focus.invalid {
                  </select>
 				 <input type='submit' value="Exchange" />
 			 </div>
-			 
+
 			 </form>
-			 
-			 
-		    <h2> Plot for Sale Price </h2> 
+
+
+		    <h2> Plot for Sale Price </h2>
             <form action="/getfigure" method="post">
 			<div class="form-group">
 			   <label for="x"> X axis:</label>
@@ -188,17 +190,16 @@ input:focus.invalid {
                 <input type="submit" value="Get figure">
              </form>
 
-	
+
 	</div>
 </div>
-</div> 
+</div>
 
- 
- 
+
+
 </body>
 
 
 
 
 </html>
-

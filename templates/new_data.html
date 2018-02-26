@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="{{ url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
   <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-  </head>  
+  </head>
 <body>
 
 <div class="jumbotron" style="background-color:#005798">
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 </div>
-  
+
 <!-- 	<table class="tg" align="center">
 		 {% for cols in Columns %}
          <tr><th class="tg-amwm">{{cols}}</th>
@@ -36,48 +36,59 @@
          {% endfor %}</tr>
          {% endfor %}
     </table>
-  
+
   </table -->
-  
+
   <div class="jumbotron">
 <div class="container">
+
+  <div class ="row">
+  <div class = "col-md-6">
+  <div class="table-responsive">
     <table class="tg" align = "center">
 	<caption align = "center">Recently Updated data</caption>
 
     <tr>
 	{% for col in columns %}
 	 <th class="tg-amwm">{{col}}</th>
-    {% endfor %}  
+    {% endfor %}
 	</tr>
-	
+
    <tr>
 	{% for col in columns %}
 	<td {% if loop.index0 == 4 and data[col]>200000 %} class="tg-pfso" {% else %} class="tg-baqh" {% endif %}>
    {{data[col]}}
-   </td> 
-   {% endfor %} 
+   </td>
+   {% endfor %}
    </tr>
-
 </table>
-
-<form action="/new_data" method="post">
-Year Sold: <input type="number" min="1900" max="2099" step="1" name="YrSold"  required>
-SaleType:   <select name="SaleType" required>
-{% for i in saletype_option %}<option value= {{i}} >{{i}}</option> {% endfor %}
-  </select>
- 
-SaleCondition: <select name="SaleCondition" required>
-{% for k in salecondition_option %}<option value= {{k}} >{{k}}</option> {% endfor %}
-</select>
-SalePrice: <input type="number" min="0" name="SalePrice" required>
-<input type="submit" value="Add new house price information">
-</form>
+</div>
+</div>
+  <div class = "col-md-6">
+    <form action="/new_data" method="post">
+<div class="form-group">
+ <label for="aa">Year Sold:</label>
+       <input type="number" class="form-control" min="1900" max="2099" step="1" name="YrSold"  required>
+ <label for="cc"> SaleType:</label>
+       <select name="SaleType" required class="form-control">
+       {% for i in saletype_option %}<option value= {{i}}>{{i}}</option> {% endfor %}
+       </select>
+ <label for="ee">SaleCondition:</label>
+ <select name="SaleCondition" class="form-control" required>
+       {% for k in salecondition_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
+       </select>
+ <label for="dd">SalePrice: </label>
+       <input type="number" min="0" name="SalePrice" class="form-control" required>
+</div>
+        <input type="submit" value="Add new house price information">
+     </form>
 
 </div>
-</div> 
+</div>
+</div>
 
 
-  
+
 </body>
 
 </html>
