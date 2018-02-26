@@ -5,7 +5,7 @@ Created on Thu Jan 25 16:34:29 2018
 @author: Yidi Gu
 """
 # Get the package
-import flask  # web interface
+import flask
 # bokeh for plotting
 from bokeh.embed import components
 from flask import Flask, render_template, request
@@ -71,9 +71,9 @@ def search():
 @app.route("/exchange", methods=['POST'])
 def exchange():
     form_data = get_formdata(request.form)
-    (lookup, target_currency,
-     required_data_lenth) = util.excange_with_target_currency(cl_currency,
-                                                              cl, form_data)
+    (lookup, target_currency, required_data_lenth) = (
+      util.excange_with_target_currency(cl_currency, cl, form_data)
+    )
     # set up parameter
     env = {
         'tablename': 'Searching',
@@ -83,7 +83,7 @@ def exchange():
         'selected_currency': target_currency,
         'requests_len': required_data_lenth
     }
-    return render_template('search.html', **env)
+    return render_template('exchange.html', **env)
 
 
 @app.route("/getfigure", methods=['POST'])
@@ -102,10 +102,10 @@ def prepare_figure():
 @app.route("/addfigure", methods=['POST'])
 def plot_figure():
     form_data = get_formdata(request.form)
-    print(form_data)
-    (lookup, target_currency,
-     required_data_lenth) = util.aggregate_avg_exchage_with_target_currency(
-             cl_currency, cl, form_data)
+    (lookup, target_currency, required_data_lenth) = (
+       util.aggregate_avg_exchage_with_target_currency(
+                cl_currency, cl, form_data)
+    )
     p = util.add_figure(lookup)
     script, div = components(p)
     env = {

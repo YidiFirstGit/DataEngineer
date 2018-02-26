@@ -55,6 +55,17 @@
 Find {{requests_len}} records.
 </p>
 
+ <form action="/requestfile" method="post" class="form-inline">
+  <input type="hidden" name="currency" value="{{selected_currency}}">	 
+  <input type="submit" value="View as XLSX">
+ </form>
+ 
+<form action="/addfigure" method="post" class="form-inline">
+ <input type="hidden" name="currency" value="{{selected_currency}}">	 
+ <input type="submit" value="Get the Figure">
+ </form> 
+
+
 
     <table class="tg" align = "center">
 	<caption align = "center">Records</caption>
