@@ -23,7 +23,7 @@ There are five collections in the "**test_database**".
 - "**test**", the full range of data; 
 - "**test_quality**", the field name with missing data count and rate.
 
-### How to set up server and database for web interface
+### How to set up server and database for web interface (Windows)
 -------
 
 1.	Please download and install Mongodb, [here](https://www.mongodb.com/download-center?jmp=nav#community) and Studio 3T, [here](https://studio3t.com/download/?gclid=CjwKCAiA_c7UBRAjEiwApCZi8S22lBU81zoWG7zI8AAofJZpeBDKOUCDY-1J9EGkS-75mY6WHnFO3hoC4XUQAvD_BwE). 
