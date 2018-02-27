@@ -145,8 +145,9 @@ def excange_with_target_currency(cl_currency, cl, form_data):
     exchange_rate = list(cl_currency.find({
                         'currency': target_currency}))[0]['rate']
     lookup = list(cl.aggregate(exchange_pipeline(exchange_rate)))
+    columns = ['Id', 'SalePrice', 'SaleCondition', 'SaleType', 'YrSold', 'currency', 'rate', 'Price(currency)']
     required_data_lenth = len(lookup)
-    return lookup, target_currency, required_data_lenth
+    return lookup, columns, target_currency, required_data_lenth
 
 
 def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
@@ -161,8 +162,9 @@ def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
     pipeline_avg.append(prepare_avg)
     pipeline_avg.append(sort_avg)
     lookup = list(cl.aggregate(pipeline_avg))
+    columns = ['Id', 'SalePrice', 'SaleCondition', 'SaleType', 'YrSold', 'currency', 'rate', 'Price(currency)']
     required_data_lenth = len(lookup)
-    return lookup, target_currency, required_data_lenth
+    return lookup, columns, target_currency, required_data_lenth
 
 
 def add_figure(lookup):
