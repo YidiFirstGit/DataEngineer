@@ -79,11 +79,10 @@ input:focus.invalid {
 <div class="jumbotron">
 <div class="container">
     <div class ="row">
-	  <div class = "col-md-5">
+	  <div class = "col-md-7">
          <h2> Example Data: </h2>
          <div class="table-responsive">
-         <table class="tg" align = "left">
-	      <caption align = "center">House Prices example data</caption>
+         <table class="tg" align = "center">
           <tr>
             {% for col in columns %}
 	      <th class="tg-amwm">{{col}}</th>
@@ -101,7 +100,7 @@ input:focus.invalid {
         </div>
 	    </div>
 
-	  <div class = "col-md-7">
+	  <div class = "col-md-5">
 		    <h2> Adding new price information </h2>
             <form action="/new_data" method="post">
 			<div class="form-group">
@@ -123,36 +122,23 @@ input:focus.invalid {
 
 
 			 <h2> Searching for records </h2>
-             <form action="/search" method="post" id="search_form" class="form-inline" onsubmit="return verify()">
+             <form action="/search" method="post" id="search_form" onsubmit="return verify()">
              <div class="form-group">
                <label for="ff">Year Sold from:</label>
                <input id="ys0" type="number" class="form-control" min="1900" max="2099" step="1" name="Year Sold from" />
-	           <label for="ss">Year Sold until:</label>
+	             <label for="ss">Year Sold until:</label>
                <input id="ye1" type="number" class="form-control" min="1900" max="2099" step="1" name="Year Sold until" />
+	             <label for="tt">SalePrice from:</label>
+	             <input id="ps0" type="number" class="form-control" min="0" step="1000" name="SalePrice from" onchange="document.getElementById('pe1').min=this.value;"/>
+	             <label for="yy">SalePrice until:</label>
+	             <input id="pe1" type="number" class="form-control" min="document.getElementById('ps0').value" step="1000" name="SalePrice until" />
+			         <label for="ee">SaleCondition:</label>
+			         <select name="SaleCondition" class="form-control" id = "sc" required>
+			         <option value = 'All'>All</option>
+               {% for k in salecondition_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
              </div>
-			 <br>
-			 <br>
-
-             <div class="form-group">
-	         <label for="tt">SalePrice from:</label>
-	         <input id="ps0" type="number" class="form-control" min="0" step="1000" name="SalePrice from" onchange="document.getElementById('pe1').min=this.value;"/>
-	         <label for="yy">SalePrice until:</label>
-	         <input id="pe1" type="number" class="form-control" min="document.getElementById('ps0').value" step="1000" name="SalePrice until" />
-             <br>
-             </div>
-			 <br>
-			 <br>
-
-			 <div class="form-group">
-			 <label for="ee">SaleCondition:</label>
-			 <select name="SaleCondition" class="form-control" id = "sc" required>
-			 <option value = 'All'>All</option>
-             {% for k in salecondition_option %}<option value= {{k}}>{{k}}</option> {% endfor %}
-
-             </div>
-
-			 <input type ="submit" value= "Search">
-			 </form>
+			       <input type ="submit" value= "Search">
+			       </form>
 
 
 			 <h2> Exchange currency </h2>
@@ -170,25 +156,16 @@ input:focus.invalid {
 
 
 		    <h2> Plot for Sale Price </h2>
-            <form action="/getfigure" method="post">
-			<div class="form-group">
-			   <label for="x"> X axis:</label>
+            <form class="form-inline" action="/getfigure" method="post">
+			      <div class="form-group">
+			         <label for="x"> X axis:</label>
                <select name="X axis" required class="form-control">
                {% for i in field_description %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
-			   <option value = 'MoYrSold'>Month and Year Sold</option>
+			         <option value = 'MoYrSold'>Month and Year Sold</option>
                </select>
-			   <br>
-			   <br>
-<!-- 			   <label for= "y"> Y axis:</label>
-			   <select name= "Y axis" required class="form-control">
-               {% for i in field_description %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
-               </select> -->
-
-			 </div>
-			 <br>
-			 <br>
-                <input type="submit" value="Get figure">
-             </form>
+			      </div>
+               <input type="submit" value="Get figure">
+            </form>
 
 
 	</div>
