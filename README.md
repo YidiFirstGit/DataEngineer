@@ -5,7 +5,12 @@ This project aims to learning how to use MongoDB with Python and build a Web int
 
 Python packages: pymongo, flask, bokeh, gevent 
 
+Notice: The 'bokeh' version is 0.12.9. You can run the following code in cmd to install this version. 
+```
+python -m pip install bokeh==0.12.9
+```
 **Please make sure you have all those packages installed in your machine before you go any further.** 
+
 
 Testing Data: The house prices estimation training data from Kaggle Competition, available [here](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data).
 
