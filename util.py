@@ -162,7 +162,7 @@ def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
     pipeline_avg.append(prepare_avg)
     pipeline_avg.append(sort_avg)
     lookup = list(cl.aggregate(pipeline_avg))
-    columns = ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice', 'currency', 'rate', 'Price(currency)']
+    columns = ['_id', 'avgPrice']
     required_data_lenth = len(lookup)
     return lookup, columns, target_currency, required_data_lenth
 
