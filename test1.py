@@ -71,13 +71,13 @@ def search():
 @app.route("/exchange", methods=['POST'])
 def exchange():
     form_data = get_formdata(request.form)
-    (lookup, target_currency, required_data_lenth) = (
+    (lookup, columns, target_currency, required_data_lenth) = (
       util.excange_with_target_currency(cl_currency, cl, form_data)
     )
     # set up parameter
     env = {
         'tablename': 'Searching',
-        'columns': lookup[:1][0].keys(),
+        'columns': columns,
         'data': lookup,
         'requests': form_data,
         'selected_currency': target_currency,
@@ -102,7 +102,7 @@ def prepare_figure():
 @app.route("/addfigure", methods=['POST'])
 def plot_figure():
     form_data = get_formdata(request.form)
-    (lookup, target_currency, required_data_lenth) = (
+    (lookup, columns, target_currency, required_data_lenth) = (
        util.aggregate_avg_exchage_with_target_currency(
                 cl_currency, cl, form_data)
     )
@@ -110,7 +110,7 @@ def plot_figure():
     script, div = components(p)
     env = {
         'tablename': 'Searching',
-        'columns': lookup[:1][0].keys(),
+        'columns': columns,
         'data': lookup,
         'requests': form_data,
         'selected_currency': target_currency,
