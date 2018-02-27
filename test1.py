@@ -27,7 +27,7 @@ app = Flask(__name__)
 def main():
     env = {
         'tablename': 'House Prices',
-        'columns': list(cl.find_one())[1:],
+        'columns': util.get_columnsname(),
         'data': cl.find().limit(20),
         'saletype_option': cl.distinct('SaleType'),
         'salecondition_option': cl.distinct('SaleCondition'),
@@ -46,7 +46,7 @@ def new_data():
     # set variable
     env = {
         'tablename': 'New inserted data',
-        'columns': list(cl.find_one())[1:],
+        'columns': util.get_columnsname(),
         'data': form_data,
         'saletype_option': cl.distinct('SaleType'),
         'salecondition_option': cl.distinct('SaleCondition')
@@ -60,7 +60,7 @@ def search():
     lookup, emptykey = request_data(cl, form_data)
     env = {
         'tablename': 'Searching',
-        'columns': list(cl.find_one())[1:],
+        'columns': util.get_columnsname(),
         'data': lookup,
         'requests': util.remove_empty(form_data, emptykey),
         'requests_len': lookup.count()

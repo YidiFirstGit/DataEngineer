@@ -11,6 +11,11 @@ import pymongo
 from bokeh.plotting import figure
 
 
+def get_columnsname():
+    col = ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice', 'currency']
+    return col
+
+
 def get_formdata(formdata):
     form_data = dict(formdata)
     form_data = zip([i for i in form_data.keys()], sum(form_data.values(), []))
