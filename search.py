@@ -16,7 +16,9 @@ def generate_lower_upper_bounds(form_data):
 
 
 def get_logical_expression(form_data, cl):
-    year_s0, year_e0, price_s0, price_e0 = generate_lower_upper_bounds(form_data)
+    year_s0, year_e0, price_s0, price_e0 = (
+      generate_lower_upper_bounds(form_data)
+    )
     salecondition = form_data['SaleCondition']
     g1 = {"YrSold": {"$gte": year_s0}}
     l1 = {"YrSold": {"$lte": year_e0}}

@@ -8,6 +8,7 @@ import io
 import openpyxl  # work with excel file
 import random
 import pymongo
+from flask import Response
 from bokeh.plotting import figure
 
 
@@ -84,7 +85,10 @@ def prepareExcel(data, title):
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = title
-    columns = [i for i in data[0].keys()]
+    columns = (
+       ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice',
+        'currency', 'rate', 'Price(currency)']
+    )
     sheet.append(columns)
     for row in data:
         sheet.append([row[i] for i in columns])
@@ -229,6 +233,20 @@ def aggregate_avg_exchage_with_target_currency(cl_currency, cl, form_data):
     columns = ['_id', 'avgPrice']
     required_data_lenth = len(lookup)
     return lookup, columns, target_currency, required_data_lenth
+
+
+def prepare_response(cl_currency, cl, form_data):
+    (lookup, _, target_currency, _) = (
+      excange_with_target_currency(cl_currency, cl, form_data)
+    )
+    title = 'House Pirce in ' + target_currency
+    mimetype = 'application/vnd.openxmlformats-officedocument.\
+    spreadsheetml.sheet'
+    response = Response(prepareExcel(lookup, title), mimetype=mimetype)
+    response.headers['Content-Type'] = mimetype
+    filename = 'attachment; filename=House Price ( '+target_currency+' ).xlsx'
+    response.headers['Content-Disposition'] = filename
+    return response
 
 
 def add_figure(lookup):

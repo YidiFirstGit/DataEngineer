@@ -4,8 +4,7 @@ Created on Thu Jan 25 16:34:29 2018
 
 @author: Yidi Gu
 """
-# Get the package
-import flask
+
 # bokeh for plotting
 from bokeh.embed import components
 from flask import Flask, render_template, request
@@ -127,20 +126,8 @@ def plot_figure():
 
 @app.route("/requestfile", methods=['POST'])
 def save_excel():
-    form_data = dict(request.form)
-    # print(form_data)
-    target_currency = form_data['currency'][0]
-    exchange_rate = list(cl_currency.find({
-            'currency': target_currency}))[0]['rate']
-    data = list(cl.aggregate(util.exchange_pipeline(exchange_rate)))
-    title = 'House Pirce in ' + target_currency
-    mimetype = 'application/vnd.openxmlformats-officedocument.\
-    spreadsheetml.sheet'
-    response = flask.Response(util.prepareExcel(data, title),
-                              mimetype=mimetype)
-    response.headers['Content-Type'] = mimetype
-    filename = 'attachment; filename=House Price ( '+target_currency+' ).xlsx'
-    response.headers['Content-Disposition'] = filename
+    form_data = get_formdata(request.form)
+    response = util.prepare_response(cl_currency, cl, form_data)
     return response
 
 
