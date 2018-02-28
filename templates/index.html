@@ -160,9 +160,17 @@ input:focus.invalid {
             <form class="form-inline" action="/getfigure" method="post">
 			      <div class="form-group">
 			         <label for="x"> X axis:</label>
-               <select name="X axis" required class="form-control">
-               {% for i in field_description %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
-			         <option value = 'MoYrSold'>Month and Year Sold</option>
+               <select name="X axis" class="selectpicker">
+                 <optgroup label= 'Date-related fields'>
+                   <option value = 'MoYrSold'>Month and Year Sold</option>
+               {% for i in field_description_date %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
+                 </optgroup>
+                 <optgroup label='Categorical fields'>
+                   {% for i in field_description_categorical %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
+                 </optgroup>
+                 <optgroup label="Numerical fields">
+                   {% for i in field_description_numerical %}<option value= {{i['field']}}>{{i['description']}}</option> {% endfor %}
+                 </optgroup>
                </select>
 			      </div>
                <input type="submit" value="Get figure">
