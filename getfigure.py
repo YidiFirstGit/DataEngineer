@@ -3,28 +3,8 @@ from datetime import date as dt
 import pandas as pd
 from bokeh.models import HoverTool
 from util import NumToMonth
-
-
-def get_date_related_fields_name(field_description):
-    '''
-    field_description is MangoDB collection
-    '''
-    regex = ".*" + 'year|month|date' + ".*"
-    field_date = [x['field'] for x in list(
-            field_description.find({
-                    'description': {'$regex': regex, "$options": 'i'}}))]
-    field_date.remove('MoSold')
-    return field_date
-
-
-def get_categorical_fields_name(cl_full):
-    '''
-    input is MangoDB collection
-    '''
-    example = cl_full.find_one({}, {'_id': False, 'Id': False})
-    field_categorical = [i for i in example if type(example[i]) == str]
-    field_categorical.append('MoSold')
-    return field_categorical
+from util import get_date_related_fields_name
+from util import get_categorical_fields_name
 
 
 def get_multiplevalue(mydict, keys):

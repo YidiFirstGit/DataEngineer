@@ -12,7 +12,9 @@ from bokeh.plotting import figure
 
 
 def get_columnsname():
-    col = ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice', 'currency']
+    col = (
+      ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice', 'currency']
+    )
     return col
 
 
@@ -131,6 +133,65 @@ def call_mongoDB():
     return cl, cl_full, field_description, cl_currency
 
 
+def remove_list_from_list(list1, remove_list):
+    for i in remove_list:
+        list1.remove(i)
+    return list1
+
+
+def sort_fields(list_field):
+    list_field.sort()
+    return list_field
+
+
+def get_date_related_fields_name(field_description):
+    '''
+    field_description is MangoDB collection
+    '''
+    regex = ".*" + 'year|month|date' + ".*"
+    field_date = [x['field'] for x in list(
+            field_description.find({
+                    'description': {'$regex': regex, "$options": 'i'}}))]
+    field_date.remove('MoSold')
+    return field_date
+
+
+def get_categorical_fields_name(cl_full):
+    '''
+    input is MangoDB collection
+    '''
+    example = cl_full.find_one({}, {'_id': False, 'Id': False})
+    field_categorical = [i for i in example if type(example[i]) == str]
+    field_categorical.append('MoSold')
+    return field_categorical
+
+
+def get_figure_selection(field_description, cl_full):
+    field_date = get_date_related_fields_name(field_description)
+    field_categorical = get_categorical_fields_name(cl_full)
+    all_fields = list(field_description.find({}, {'_id': 0, 'description': 0}))
+    field_numerical = [x['field'] for x in all_fields]
+    field_remove = field_date + field_categorical
+    field_remove.remove('currency')
+    field_numerical = remove_list_from_list(field_numerical, field_remove)
+    field_date = (
+       list(field_description.find({
+                              'field': {'$in': field_date}
+                              }).sort('description'))
+       )
+    field_categorical = (
+       list(field_description.find({
+                              'field': {'$in': field_categorical}
+                              }).sort('description'))
+       )
+    field_numerical = (
+       list(field_description.find({
+                              'field': {'$in': field_numerical}
+                              }).sort('description'))
+       )
+    return field_date, field_categorical, field_numerical
+
+
 def create_dataframe_with_currency(cl, cl_currency, form_data):
     form_data['YrSold'] = int(form_data['YrSold'])
     form_data['SalePrice'] = int(form_data['SalePrice'])
@@ -145,7 +206,10 @@ def excange_with_target_currency(cl_currency, cl, form_data):
     exchange_rate = list(cl_currency.find({
                         'currency': target_currency}))[0]['rate']
     lookup = list(cl.aggregate(exchange_pipeline(exchange_rate)))
-    columns = ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice', 'currency', 'rate', 'Price(currency)']
+    columns = (
+       ['Id', 'YrSold', 'SaleType', 'SaleCondition', 'SalePrice',
+        'currency', 'rate', 'Price(currency)']
+    )
     required_data_lenth = len(lookup)
     return lookup, columns, target_currency, required_data_lenth
 

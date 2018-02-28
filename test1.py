@@ -14,7 +14,6 @@ from gevent.wsgi import WSGIServer
 import util
 from util import get_formdata
 from search import request_data
-import getfigure
 from getfigure import request_figure
 
 # call the mongo database
@@ -26,25 +25,19 @@ app = Flask(__name__)
 
 @app.route("/")
 def main():
-    field_date = getfigure.get_date_related_fields_name(field_description)
-    field_categorical = getfigure.get_categorical_fields_name(cl_full)
-    all_fields = list(field_description.find({},{'_id':0,'description':0}))
-    field_numerical = [x['field'] for x in all_fields]
-    field_remove = field_date + field_categorical
-    field_remove.remove('currency')
-    for i in field_remove:
-        field_numerical.remove(i)
-
+    (field_date, field_categorical, field_numerical) = (
+      util.get_figure_selection(field_description, cl_full)
+    )
     env = {
         'tablename': 'House Prices',
         'columns': util.get_columnsname(),
         'data': cl.find().limit(20),
         'saletype_option': cl.distinct('SaleType'),
         'salecondition_option': cl.distinct('SaleCondition'),
-        'currency_option': cl_currency.distinct('currency'),
-        'field_description_date': list(field_description.find({'field':{'$in':field_date}})),
-        'field_description_categorical': list(field_description.find({'field':{'$in':field_categorical}})),
-        'field_description_numerical': list(field_description.find({'field':{'$in':field_numerical}}))
+        'currency_option': util.sort_fields(cl_currency.distinct('currency')),
+        'field_description_date': field_date,
+        'field_description_categorical': field_categorical,
+        'field_description_numerical': field_numerical
     }
     return render_template('index.html', **env)
 
