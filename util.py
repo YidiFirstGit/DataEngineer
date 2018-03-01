@@ -8,6 +8,7 @@ import io
 import openpyxl  # work with excel file
 import random
 import pymongo
+import six
 from flask import Response
 from bokeh.plotting import figure
 
@@ -165,7 +166,9 @@ def get_categorical_fields_name(cl_full):
     input is MangoDB collection
     '''
     example = cl_full.find_one({}, {'_id': False, 'Id': False})
-    field_categorical = [i for i in example if type(example[i]) == str]
+    field_categorical = (
+        [i for i in example if isinstance(example[i], six.string_types)]
+    )
     field_categorical.append('MoSold')
     return field_categorical
 
