@@ -41,7 +41,7 @@ Notice: All the data are raw data. When you plot the sale price with some fields
 ### How to set up server and database for web interface (Windows)
 -------
 
-1. Use one of the following codes to install requirements :
+1.  Install requirements using one of the following codes :
 ```
 pip install -r requirements.txt
 python -m pip install -r requirements.txt 
