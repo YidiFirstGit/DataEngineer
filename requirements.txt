@@ -1,0 +1,4 @@
+pymongo
+flask
+bokeh==0.12.9
+gevent
