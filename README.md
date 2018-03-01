@@ -5,20 +5,29 @@ This project aims to learning how to use MongoDB with Python and build a Web int
 
 Required python packages: pymongo, flask, bokeh, gevent 
 
-You can run the following code to install requirements:
-
-```
-pip install -r requirements.txt
-```
-
-**Please make sure you have all those packages installed in your machine before you go any further.** 
-
 Testing Data: The house prices estimation training data from Kaggle Competition, available [here](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data).
 
-Full training list: 
-  * Insert data into MongoDB
-  * Query data from MongoDB
-  * Build Web interface 
+### How to set up server and database for web interface (Windows)
+-------
+
+1. Use one of the following codes to install requirements :
+```
+pip install -r requirements.txt
+python -m pip install -r requirements.txt 
+```
+2.	Please download and install Mongodb, [here](https://www.mongodb.com/download-center?jmp=nav#community) and Studio 3T, [here](https://studio3t.com/download/?gclid=CjwKCAiA_c7UBRAjEiwApCZi8S22lBU81zoWG7zI8AAofJZpeBDKOUCDY-1J9EGkS-75mY6WHnFO3hoC4XUQAvD_BwE). 
+3.	Set up database with mongodump folder. (**Please decompress the mongodump file in a directory before you go any further.**) 
+- Run mongod.exe in cmd. It might be in the path "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe"
+- Open Studio 3T and connect with DB server (localhost:27017)
+- In the Studio 3T, click the “Import” in the top graphical menu. 
+  
+  Choose "**BSON – mongodump folder**" -> Select the mongodump folder -> Make sure you have checked all collections in the "**test_database**" -> ... -> "Start Import"
+- Now, you should have a database called "**test_database**" with five collections under localhost:27017 DB server.
+4.	Open a new cmd, and run test1.py.
+```
+python test1.py
+```
+5.	Now that the server’s running, visit http://localhost:8080/ with your Web browser. You’ll see the “House Price Estimation” web interface.  
 
 ### Database structure
 -------
@@ -28,24 +37,6 @@ There are five collections in the "**test_database**".
 - "**data_fields**", the data fields name with description; 
 - "**test**", the full range of data; 
 - "**test_quality**", the field name with missing data count and rate.
-
-### How to set up server and database for web interface (Windows)
--------
-
-1.	Please download and install Mongodb, [here](https://www.mongodb.com/download-center?jmp=nav#community) and Studio 3T, [here](https://studio3t.com/download/?gclid=CjwKCAiA_c7UBRAjEiwApCZi8S22lBU81zoWG7zI8AAofJZpeBDKOUCDY-1J9EGkS-75mY6WHnFO3hoC4XUQAvD_BwE). 
-2.	Set up database with mongodump folder. (**Please decompress the mongodump file in a directory before you go any further.**) 
-- Run mongod.exe in cmd. It might be in the path "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe"
-- Open Studio 3T and connect with DB server (localhost:27017)
-- In the Studio 3T, click the “Import” in the top graphical menu. 
-  
-  Choose "**BSON – mongodump folder**" -> Select the mongodump folder -> Make sure you have checked all collections in the "**test_database**" -> ... -> "Start Import"
-- Now, you should have a database called "**test_database**" with five collections under localhost:27017 DB server.
-3.	Open a new cmd, and run test1.py.
-```
-python test1.py
-```
-4.	Now that the server’s running, visit http://localhost:8080/ with your Web browser. You’ll see the “House Price Estimation” web interface.  
-
 
 ### Introduction of Web Interface
 --------
