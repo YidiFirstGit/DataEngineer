@@ -3,15 +3,15 @@
 
 This project aims to learning how to use MongoDB with Python and build a Web interface with Flask. 
 
-Python packages: pymongo, flask, bokeh, gevent 
-
-**Please make sure you have all those packages installed in your machine before you go any further.** 
+Required python packages: pymongo, flask, bokeh, gevent 
 
 You can run the following code to install requirements:
 
 ```
 pip install -r requirements.txt
 ```
+
+**Please make sure you have all those packages installed in your machine before you go any further.** 
 
 Testing Data: The house prices estimation training data from Kaggle Competition, available [here](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data).
 
